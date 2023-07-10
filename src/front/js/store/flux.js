@@ -39,43 +39,36 @@ const getState = ({ getStore, getActions, setStore }) => {
 		  setStore({ demo: demo });
 		},
 		
-		// login: async (email, password) => {
-		// 	try {
-		// 	  const response = await fetch(process.env.BACKEND_URL + "/api/log-in", {
-		// 		method: "POST",
-		// 		body: JSON.stringify({
-		// 		  email: email,
-		// 		  password: password,
-		// 		}),
-		// 		headers: {
-		// 		  "Content-Type": "application/json",
-		// 		},
-		// 	  })
-		// 	  .then((response) => response.json())
-		// 	  .then((result)=> getActions().verifyUser(result.access_token))
-			 
-		// 	} catch (error) {
-		// 	  console.log(error);
-		// 	}
-		//   },
-
-		login: (email,password)=>{
-			const user={
-				email:email,
-				password:password,
-			}
-			fetch(process.env.BACKEND_URL + "/api/log-in",{
-				method:"POST",
-				headers: {
-					"Content-Type": "application/json",
-					},
-				body: JSON.stringify(user),
-				redirect: "follow",
-			})
-			.then((response) => response.json())
-			.then((result)=> setStore({user:result}))
-			.catch((error)=> console.log(error))
-		},
+		
+				login: async (email, password) => {
+				  try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/log-in", {
+					  method: "POST",
+					  headers: {
+						"Content-Type": "application/json",
+					  },
+					  body: JSON.stringify({
+						email: email,
+						password: password,
+					  }),
+					});
+		  
+					if (response.ok) {
+					  const data = await response.json();
+					  setStore({ user: data });
+					  localStorage.setItem("user", JSON.stringify(data));
+					  return data;
+					} else {
+					  throw new Error("Login failed");
+					}
+				  } catch (error) {
+					throw new Error("Login failed");
+				  }
+				},
+		
+		  
+		 
+		  
 
 		verifyUser:(token) =>{
 			fetch(process.env.BACKEND_URL + "/api/user-by-token",{
